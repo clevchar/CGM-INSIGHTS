@@ -1,7 +1,9 @@
 # CGM Insights Dashboard
 
-A Streamlit web app that transforms raw Continuous Glucose Monitor (CGM) data into actionable insights.  
+A Streamlit web app that transforms raw Continuous Glucose Monitor (CGM) data into actionable insights.
 Upload your CGM CSV file to visualize time-in-range percentages, glucose trends, spike patterns, and weekly behavior.
+
+-> This platform currently supports CGM data from Dexcom and Libre. <-
 
 **🔗 Live App:** [cgm-insights.streamlit.app](https://cgm-insights.streamlit.app/)
 
