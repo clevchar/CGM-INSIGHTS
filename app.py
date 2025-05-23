@@ -70,7 +70,7 @@ def plot_daily_glucose_profiles_enhanced(df):
             elif val > target_high - 20 or val < target_low + 20: color = "gold"
             ax.plot(times[i:i+2], [val, next_val], color=color if color != "gray" else str(0.3 * darkness), linewidth=0.6, linestyle='--')
     ax.plot(times, smoothed_mean, color='darkblue', linewidth=3, label='Smoothed Daily Average')
-    ax.set_title("Daily Glucose Patterns (Color-Coded Extremes + Proximity-Weighted Lines)")
+    ax.set_title("Daily Glucose Patterns (Each Line = 1 Day)")
     ax.set_xlabel("Time of Day")
     ax.set_ylabel("Glucose (mg/dL)")
     ax.yaxis.set_ticks(range(0, int(pivot.max().max()) + 50, 25))
@@ -163,7 +163,7 @@ def plot_weekday_glucose_profiles_enhanced(df):
                         color=color if color != "gray" else str(0.3 * darkness),
                         linewidth=0.6, linestyle='--')
         ax.plot(times, smoothed_mean, color='darkblue', linewidth=3, label='Smoothed Average')
-        ax.set_title(f"Glucose Profiles on {day} (Color-Coded Extremes)")
+        ax.set_title(f"Glucose Profiles on {day}")
         ax.set_xlabel("Time of Day")
         ax.set_ylabel("Glucose (mg/dL)")
         ax.xaxis.set_major_formatter(plt.matplotlib.dates.DateFormatter('%H:%M'))
@@ -297,3 +297,4 @@ if file:
         plot_weekday_glucose_profiles_enhanced(df)
 else:
     st.warning("📁 Please upload a CGM CSV file to begin.")
+
