@@ -24,10 +24,9 @@ Upload your CGM CSV file to visualize time-in-range percentages, glucose trends,
 
 Here are a few example visualizations:
 
-| Daily Glucose Trends | Weekly Glucose Curve | TIR Summary |
-|----------------------|----------------------|-------------|
-| ![daily](images/daily_glucose.png) | ![weekly](images/weekly_glucose.png) | ![tir](images/tir_summary.png) |
-
+| Daily Avg. | Weekly Avg. | Day of Week Avg. | TIR & Analytics |
+|--------------------|---------------------|---------------------------|-----------------|
+| ![daily](images/Daily.png) | ![weekly](images/Weekly.png) | ![weekday](images/Thursday.png) | ![tir](images/TXT.png) |
 
 ---
 
