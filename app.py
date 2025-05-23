@@ -21,14 +21,27 @@ file = st.file_uploader("Upload your CGM CSV file", type=["csv"])
 def cached_load(file):
     return load_glucose_data(file)
 
-
 def load_glucose_data(file):
-    df = pd.read_csv(file)
+    df = pd.read_csv(file, sep=None, engine='python')  # Auto-detect delimiter (comma or tab)
     df.columns = df.columns.str.strip()
-    df['Timestamp'] = pd.to_datetime(df['Timestamp (YYYY-MM-DDThh:mm:ss)'], errors='coerce')
-    df['Glucose Value (mg/dL)'] = pd.to_numeric(df['Glucose Value (mg/dL)'], errors='coerce')
+
+    if "Timestamp (YYYY-MM-DDThh:mm:ss)" in df.columns and "Glucose Value (mg/dL)" in df.columns:
+        # Dexcom format
+        df['Timestamp'] = pd.to_datetime(df['Timestamp (YYYY-MM-DDThh:mm:ss)'], errors='coerce')
+        df['Glucose Value (mg/dL)'] = pd.to_numeric(df['Glucose Value (mg/dL)'], errors='coerce')
+        df = df[df['Event Type'] == 'EGV']
+    elif "Time" in df.columns and ("Historic Glucose (mmol/L)" in df.columns or "Scan Glucose (mmol/L)" in df.columns):
+        # Libre format
+        df['Timestamp'] = pd.to_datetime(df['Time'], errors='coerce')
+        # Prefer scanned glucose if available, fallback to historic
+        df['Glucose Value (mg/dL)'] = pd.to_numeric(
+            df['Scan Glucose (mmol/L)'].combine_first(df['Historic Glucose (mmol/L)']),
+            errors='coerce'
+        ) * 18.0182  # Convert mmol/L to mg/dL
+    else:
+        raise ValueError("Unknown file format")
+
     df = df.dropna(subset=['Timestamp', 'Glucose Value (mg/dL)'])
-    df = df[df['Event Type'] == 'EGV']
     df = df.sort_values('Timestamp')
     df.set_index('Timestamp', inplace=True)
     return df
