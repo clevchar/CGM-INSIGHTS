@@ -189,8 +189,8 @@ if file:
 
     # Spike/Dip Hours
     df_interp["Hour"] = df_interp.index.hour
-    high_counts = df_interp[glucose > 200]["Hour"].value_counts().sort_values(ascending=False).head(5).to_dict()
-    low_counts = df_interp[glucose < 80]["Hour"].value_counts().sort_values(ascending=False).head(5).to_dict()
+    high_counts = df_interp[glucose > target_high]["Hour"].value_counts().sort_values(ascending=False).head(5).to_dict()
+    low_counts = df_interp[glucose < target_low]["Hour"].value_counts().sort_values(ascending=False).head(5).to_dict()
 
     # Stability
     hourly_stats = df_interp.groupby(df_interp.index.hour)["Glucose Value (mg/dL)"].agg(['mean', 'std'])
@@ -236,18 +236,18 @@ if file:
     in_range = False
     start_time = None
     for time, val in glucose.items():
-        if not in_range and (val < 70 or val > 180):
+        if not in_range and (val < target_low or val > target_high):
             start_time = time
             in_range = True
-        elif in_range and 70 <= val <= 180:
+        elif in_range and target_low <= val <= target_high:
             return_durations.append((time - start_time).total_seconds() / 60.0)
             in_range = False
     avg_return_time = round(np.mean(return_durations), 2) if return_durations else None
 
     # Time summaries
     total_minutes = len(glucose) * 5
-    above_minutes = len(glucose[glucose > 180]) * 5
-    below_minutes = len(glucose[glucose < 70]) * 5
+    above_minutes = len(glucose[glucose > target_high]) * 5
+    below_minutes = len(glucose[glucose < target_low]) * 5
     in_range_minutes = total_minutes - above_minutes - below_minutes
 
     st.subheader("📊 Metrics")
@@ -259,8 +259,8 @@ if file:
         f"Below Range (< {target_low} mg/dL) (%)": below,
         "Standard Deviation (mg/dL)": std,
         "Variance (mg/dL²)": var,
-        "Top 5 Spike Hours (>200 mg/dL)": high_counts,
-        "Top 5 Dip Hours (<80 mg/dL)": low_counts,
+        f"Top 5 Spike Hours (by data points > {target_high} mg/dL)": high_counts,
+        f"Top 5 Dip Hours (by data points < {target_low} mg/dL)": low_counts,
         "Most Stable Hours": stable_hours,
         "Most Volatile Hours": volatile_hours,
         "Best Days of the Week": best_days,
